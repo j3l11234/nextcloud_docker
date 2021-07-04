@@ -1,4 +1,4 @@
-FROM nextcloud:fpm-alpine
+FROM nextcloud:21.0.3-fpm-alpine
 
 RUN set -ex; \
     \
@@ -38,6 +38,10 @@ RUN set -ex; \
 # RUN apk add --no-cache procps samba-client
 
 RUN echo -e "\$AUTOCONFIG['check_data_directory_permissions'] = false;" >> /usr/src/nextcloud/config/autoconfig.php
+RUN sed -i 's/pm.max_children = .*/pm.max_children = 10/' /usr/local/etc/php-fpm.d/www.conf
 
-
-
+COPY libsmbclient-4.14.5-r0.apk /tmp
+RUN set -ex; \
+    \
+    apk add --no-cache --allow-untrusted  /tmp/libsmbclient-4.14.5-r0.apk \
+    rm /tmp/libsmbclient-4.14.5-r0.apk
